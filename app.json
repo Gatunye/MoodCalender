@@ -1,0 +1,12 @@
+{
+  "name": "CalenderApp",
+  "displayName": "CalenderApp",
+  "expo": {
+    "name": "CalenderApp",
+    "slug": "CalenderApp",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
