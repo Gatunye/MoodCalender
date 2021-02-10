@@ -1,5 +1,6 @@
 import { AntDesign } from "@expo/vector-icons";
 import React from "react";
+import { useState } from "react";
 import {
   Text,
   View,
@@ -36,7 +37,17 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function HowDoIFeel({ closeDialog }) {
+export default function HowDoIFeel({ closeDialog, updateMood, setMood }) {
+    const [mood, setMyMood] = useState({
+        day: 1,
+        month: 1,
+        year: 2021,
+        mood: "happy",
+        notes: ""
+    });
+    const onMoodChange = (_mood) => () => {
+        setMyMood({...mood, mood: _mood});
+    }
   return (
     <View
       style={{
@@ -79,25 +90,28 @@ export default function HowDoIFeel({ closeDialog }) {
             How do you feel
           </Text>
           <View style={[styles.row, { marginTop: 20 }]}>
-            <TouchableOpacity style={styles.col}>
+            <TouchableOpacity style={styles.col} onPress={onMoodChange("down")}>
               <Emoji
                 name=":unamused:"
                 style={{ fontSize: 20, marginRight: 10 }}
               />
               <Text style={{ fontWeight: "bold", fontSize: 15 }}>Down</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.col}>
+            <TouchableOpacity style={styles.col} onPress={onMoodChange("sad")}>
               <Emoji
                 name=":disappointed:"
                 style={{ fontSize: 20, marginRight: 10 }}
               />
               <Text style={{ fontWeight: "bold", fontSize: 15 }}>Sad</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.col}>
+            <TouchableOpacity
+              style={styles.col}
+              onPress={onMoodChange("happy")}
+            >
               <Emoji name=":smile:" style={{ fontSize: 20, marginRight: 10 }} />
               <Text style={{ fontWeight: "bold", fontSize: 15 }}>Happy</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.col}>
+            <TouchableOpacity style={styles.col} onPress={onMoodChange("supper")}>
               <Emoji
                 name=":stuck_out_tongue_winking_eye:"
                 style={{ fontSize: 20, marginRight: 10 }}
@@ -108,6 +122,9 @@ export default function HowDoIFeel({ closeDialog }) {
           <View style={styles.row}>
             <View style={styles.input}>
               <TextInput
+                onChangeText={(text) => {
+                    setMyMood({...mood, text: text})
+                }}
                 placeholder="Journal your thoughts about this moment"
                 multiline={true}
               />
@@ -115,6 +132,7 @@ export default function HowDoIFeel({ closeDialog }) {
           </View>
           <MyButton
             onPress={() => {
+              setMood(mood);
               closeDialog();
             }}
           />

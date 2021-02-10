@@ -21,25 +21,110 @@ const moods = {
   ),
 };
 
+const monthsList = {
+  0: "January",
+  1: "February",
+  2: "March",
+  3: "April",
+  4: "May",
+  5: "June",
+  6: "July",
+  7: "August",
+  8: "September",
+  9: "October",
+  10: "November",
+  11: "December",
+};
+
+var getDaysInMonth = function (month, year) {
+  return new Date(year, month, 0).getDate();
+};
+
+const initialMoods = (
+  year = new Date().getFullYear(),
+  month = new Date().getMonth()
+) => {
+  const days = getDaysInMonth(month, year);
+  let count = [];
+  for (var i = 1; i <= days; i++) {
+    count.push({
+      mood: "happy",
+      note: "",
+    });
+  }
+  return {
+    [new Date().getFullYear()]: {
+      [new Date().getMonth()]: {
+        [new Date().getDate()]: count,
+      },
+    },
+  };
+};
+
+const monthDaysList = (
+  year = new Date().getFullYear(),
+  month = new Date().getMonth()
+) => {
+  const days = getDaysInMonth(month, year);
+  let count = [];
+  for (var i = 1; i <= days; i++) {
+    count.push(i);
+  }
+  return count;
+};
+
 export default function Home(props) {
   const [showDialog, setShowDialog] = useState(false);
   const closeDialog = (props) => {
     setShowDialog(false);
   };
 
-  const [myMoods, setMyMoods] = useState({
-    2020: {
-      jan: [
-        {
-          day: "",
-          month: "",
-          year: "",
-          note: "",
-          mood: "",
-        },
-      ],
-    },
-  });
+  const getMood = (year, month, day) => {
+    if (year in myMoods) {
+      if (month in myMoods[year]) {
+        if (day in myMoods[year][month]) {
+          return myMoods[year][month][day];
+        }
+        return false;
+      }
+      return false;
+    }
+    return false;
+  };
+
+  const [myMoods, setMyMoods] = useState(initialMoods);
+
+  const setMood = (_mood = {}) => {
+    if (_mood === false) {
+      return;
+    }
+
+    const { year, mood, month, day } = _mood;
+
+    if (year in myMoods) {
+      if (month in myMoods[year]) {
+        if (day in myMoods[year][month]) {
+          setMyMoods({
+            ...myMoods,
+            [year]: {
+              ...myMoods[year],
+              [month]: {
+                ...myMoods[year][month],
+                [day]: {
+                  ...mood,
+                },
+              },
+            },
+          });
+          console.log(myMoods)
+          return true;
+        }
+        return false;
+      }
+      return false;
+    }
+    return false;
+  };
 
   return (
     <React.Fragment>
@@ -50,15 +135,30 @@ export default function Home(props) {
         </View>
         <ScrollView>
           <View style={{ width: "100%", padding: 35, paddingTop: 0 }}>
-            <CalenderMonth />
-            <CalenderMonth />
-            <CalenderMonth />
+            <CalenderMonth
+              year={new Date().getFullYear()}
+              month={new Date().getMonth() -1}
+              getMood={getMood}
+              setMood={setMood}
+            />
+            <CalenderMonth
+              year={new Date().getFullYear()}
+              month={new Date().getMonth()}
+              getMood={getMood}
+              setMood={setMood}
+            />
+            <CalenderMonth
+              year={new Date().getFullYear()}
+              month={new Date().getMonth() +1}
+              getMood={getMood}
+              setMood={setMood}
+            />
           </View>
         </ScrollView>
       </View>
       {showDialog && (
         <View style={styles.dialog}>
-          <HowDoIFeel closeDialog={closeDialog} />
+          <HowDoIFeel setMood={setMood} closeDialog={closeDialog} />
         </View>
       )}
     </React.Fragment>
@@ -82,6 +182,7 @@ const Header = ({ navigation, setShowDialog }) => {
 };
 
 const CalenderMonth = (props) => {
+  const { year, month, getMood } = props;
   return (
     <View style={styles.calenderMonthRoot}>
       <View
@@ -92,7 +193,7 @@ const CalenderMonth = (props) => {
           marginBottom: 20,
         }}
       >
-        <Text style={styles.monthText}>December</Text>
+        <Text style={styles.monthText}>{monthsList[month]}</Text>
       </View>
       <View style={styles.daysRoot}>
         <View style={styles.day}>
@@ -118,166 +219,11 @@ const CalenderMonth = (props) => {
         </View>
       </View>
       <View style={styles.daysRoot}>
-        {[
-          {
-            day: 1,
-            hasMood: true,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 2,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 3,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 4,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 5,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 6,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 7,
-            hasMood: true,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 8,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 9,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 10,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 11,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 12,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 13,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 14,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 15,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 16,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 17,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 18,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 19,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 20,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 21,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 22,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 23,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 24,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 25,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 26,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 26,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 27,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 28,
-            hasMood: false,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 29,
-            hasMood: true,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-          {
-            day: 30,
-            hasMood: true,
-            mood: <Emoji name=":smile:" style={{ fontSize: 20 }} />,
-          },
-        ].map(({ hasMood, day, mood }, index) => {
+        {monthDaysList().map((day, index) => {
+          let mood = getMood(year, month, day);
           return (
             <View style={styles.day} key={index}>
-              {hasMood === true ? mood : <Text>{day}</Text>}
+              {mood !== false ? <Text>asxasx</Text>: <Text>{day}</Text>}
             </View>
           );
         })}
